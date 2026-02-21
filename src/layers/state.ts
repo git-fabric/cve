@@ -202,3 +202,37 @@ export async function stats(
     topRepos,
   };
 }
+
+/**
+ * Compact the queue by removing resolved entries older than the retention period.
+ * Never removes pending entries.
+ */
+export async function compact(
+  state: StateAdapter,
+  opts: { retentionDays?: number } = {},
+): Promise<{ before: number; after: number; removed: number; byStatus: Record<string, number> }> {
+  const raw = await state.read(QUEUE_FILE);
+  if (!raw) return { before: 0, after: 0, removed: 0, byStatus: {} };
+
+  const queue = parseQueue(raw);
+  const before = queue.size;
+  const retentionMs = (opts.retentionDays ?? 30) * 86400000;
+  const cutoff = Date.now() - retentionMs;
+  const removedByStatus: Record<string, number> = {};
+
+  for (const [key, entry] of queue) {
+    if (entry.status === "pending") continue;
+    const ts = entry.processedAt ?? entry.detectedAt;
+    if (ts && new Date(ts).getTime() < cutoff) {
+      removedByStatus[entry.status] = (removedByStatus[entry.status] ?? 0) + 1;
+      queue.delete(key);
+    }
+  }
+
+  const removed = before - queue.size;
+  if (removed > 0) {
+    await state.write(QUEUE_FILE, serialize(queue));
+  }
+
+  return { before, after: queue.size, removed, byStatus: removedByStatus };
+}

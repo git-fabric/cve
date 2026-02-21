@@ -14,7 +14,11 @@
  */
 
 import { Octokit } from "octokit";
+import { throttling } from "@octokit/plugin-throttling";
+import { retry } from "@octokit/plugin-retry";
 import type { GitHubAdapter, StateAdapter } from "../types.js";
+
+const HardenedOctokit = Octokit.plugin(throttling, retry);
 
 export async function createAdaptersFromEnv(): Promise<{
   github: GitHubAdapter;
@@ -33,7 +37,20 @@ export async function createAdaptersFromEnv(): Promise<{
     .filter(Boolean);
 
   const [stateOwner, stateRepoName] = stateRepo.split("/");
-  const octokit = new Octokit({ auth: token });
+  const octokit = new HardenedOctokit({
+    auth: token,
+    throttle: {
+      onRateLimit: (retryAfter: number, options: any, _octokit: any, retryCount: number) => {
+        console.warn(`[git-fabric/cve] Rate limit hit for ${options.method} ${options.url} — retry ${retryCount + 1}/4 after ${retryAfter}s`);
+        return retryCount < 4;
+      },
+      onSecondaryRateLimit: (retryAfter: number, options: any) => {
+        console.warn(`[git-fabric/cve] Secondary rate limit for ${options.method} ${options.url} — backoff ${retryAfter}s`);
+        return true;
+      },
+    },
+    retry: { doNotRetry: ["429"] },
+  });
 
   // ── GitHub adapter ──────────────────────────────────────────────────────
 
