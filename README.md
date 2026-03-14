@@ -135,7 +135,7 @@ fabric-cve registers as **AS65009** with the fabric-sdk gateway. On startup in H
 | `fabric.cve.enrich` | CVE enrichment — NVD details, CVSS, CWE, references |
 | `fabric.cve.triage` | Triage — severity policy, auto-PR, queue processing |
 | `fabric.cve.queue` | Queue management — list, stats, update, compact |
-| `fabric.security.vulnerabilities` | Vulnerability intelligence across managed repos |
+| `fabric.cve.intelligence` | Vulnerability intelligence across managed repos |
 
 All routes advertise with `local_pref: 100` (deterministic lane). The gateway uses these prefixes to resolve natural language queries to the correct fabric without calling Claude.
 

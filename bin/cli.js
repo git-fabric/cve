@@ -87,7 +87,7 @@ program
           { prefix: "fabric.cve.enrich", local_pref: 100, confidence_floor: 0.7, description: "CVE enrichment — NVD details, CVSS, CWE, references" },
           { prefix: "fabric.cve.triage", local_pref: 100, confidence_floor: 0.7, description: "Triage — severity policy, auto-PR, queue processing" },
           { prefix: "fabric.cve.queue", local_pref: 100, confidence_floor: 0.7, description: "Queue management — list, stats, update, compact" },
-          { prefix: "fabric.security.vulnerabilities", local_pref: 100, confidence_floor: 0.7, description: "Vulnerability intelligence across managed repos" },
+          { prefix: "fabric.cve.intelligence", local_pref: 100, confidence_floor: 0.7, description: "Vulnerability intelligence across managed repos" },
         ],
       };
       try {
