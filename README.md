@@ -269,3 +269,8 @@ bin/
 ## License
 
 MIT
+
+<!-- org-footer -->
+---
+
+<p align="center"><sub>Part of <a href="https://github.com/git-fabric">git-fabric</a> · composable fabric apps for Git-native infrastructure · built by <a href="https://github.com/ry-ops">ry-ops</a></sub></p>
