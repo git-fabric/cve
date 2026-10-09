@@ -14,6 +14,7 @@ export async function createApp() {
             {
                 name: "cve_scan",
                 description: "Scan managed repos for vulnerable dependencies via GitHub Advisory Database. Appends findings to the CVE queue.",
+                annotations: { readOnlyHint: false, destructiveHint: false },
                 inputSchema: {
                     type: "object",
                     properties: {
@@ -37,6 +38,7 @@ export async function createApp() {
             {
                 name: "cve_enrich",
                 description: "Fetch enriched vulnerability details for a CVE ID from NVD.",
+                annotations: { readOnlyHint: true },
                 inputSchema: {
                     type: "object",
                     properties: { cve_id: { type: "string", description: "CVE ID (e.g. CVE-2024-12345)" } },
@@ -51,6 +53,7 @@ export async function createApp() {
             {
                 name: "cve_batch",
                 description: "Batch enrich and rank multiple CVEs by severity.",
+                annotations: { readOnlyHint: true },
                 inputSchema: {
                     type: "object",
                     properties: { cve_ids: { type: "array", items: { type: "string" }, description: "Up to 20 CVE IDs" } },
@@ -64,6 +67,7 @@ export async function createApp() {
             {
                 name: "cve_triage",
                 description: "Process pending CVE queue entries: apply severity policy and open PRs.",
+                annotations: { readOnlyHint: false, destructiveHint: false },
                 inputSchema: {
                     type: "object",
                     properties: {
@@ -108,6 +112,7 @@ export async function createApp() {
             {
                 name: "cve_queue_list",
                 description: "List CVE queue entries filtered by status and severity.",
+                annotations: { readOnlyHint: true },
                 inputSchema: {
                     type: "object",
                     properties: {
@@ -130,6 +135,7 @@ export async function createApp() {
             {
                 name: "cve_queue_stats",
                 description: "Queue health dashboard: totals by status and severity, oldest pending, top repos.",
+                annotations: { readOnlyHint: true },
                 inputSchema: { type: "object", properties: {} },
                 async execute() {
                     return JSON.stringify(await state.stats(sa), null, 2);
@@ -138,6 +144,7 @@ export async function createApp() {
             {
                 name: "cve_queue_update",
                 description: "Manually update status of a CVE queue entry.",
+                annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true },
                 inputSchema: {
                     type: "object",
                     properties: {
@@ -156,6 +163,7 @@ export async function createApp() {
             {
                 name: "cve_compact",
                 description: "Compact the CVE queue by removing resolved entries older than the retention period.",
+                annotations: { readOnlyHint: false, destructiveHint: true },
                 inputSchema: {
                     type: "object",
                     properties: {

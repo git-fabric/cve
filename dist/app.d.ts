@@ -8,6 +8,12 @@ interface FabricTool {
     name: string;
     description: string;
     inputSchema: Record<string, unknown>;
+    annotations?: {
+        readOnlyHint?: boolean;
+        destructiveHint?: boolean;
+        idempotentHint?: boolean;
+        openWorldHint?: boolean;
+    };
     execute: (args: Record<string, unknown>) => Promise<unknown>;
 }
 interface FabricApp {
