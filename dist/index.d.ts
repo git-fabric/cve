@@ -7,4 +7,5 @@
 export * from "./types.js";
 export * as layers from "./layers/index.js";
 export { createApp } from "./app.js";
+export { Library } from "./library.js";
 //# sourceMappingURL=index.d.ts.map
